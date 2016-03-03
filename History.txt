@@ -16,6 +16,7 @@
    setting.
  * Fixed some compiler warnings. Not all compiler warnings were fixed
    since those changes could not be tested.
+ * Utilize the arhive_read command to open a file stored in a jar or zip
 
 == 0.3
 

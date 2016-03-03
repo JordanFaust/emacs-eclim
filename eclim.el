@@ -372,7 +372,7 @@ FILENAME is given, return that file's  project name instead."
         (kill-buffer old-buffer)))))
 
 (defun eclim--find-display-results (pattern results &optional open-single-file)
-  (let ((results (cl-remove-if (lambda (result) (string-match (rx bol (or "jar" "zip") ":") (assoc-default 'filename result))) results)))
+  (let ((results results))
     (if (and (= 1 (length results)) open-single-file) (eclim--visit-declaration (elt results 0))
       (pop-to-buffer (get-buffer-create "*eclim: find"))
       (let ((buffer-read-only nil))
@@ -396,7 +396,14 @@ FILENAME is given, return that file's  project name instead."
             (assoc-default 'column line)
             (assoc-default 'message line))))
 
+(defun eclim--extract-archive-file (line)
+  (if (string-match (rx bol (or "jar" "zip") ":") (assoc-default 'filename line))
+      (eclim/with-results results ("archive_read" "-f" (assoc-default 'filename line))
+        (results))
+    line))
+
 (defun eclim--visit-declaration (line)
+  (let (line (eclim--extract-archive-file line)))
   (ring-insert find-tag-marker-ring (point-marker))
   (eclim--find-file (assoc-default 'filename line))
   (goto-char (point-min))
