@@ -397,7 +397,7 @@ FILENAME is given, return that file's  project name instead."
             (assoc-default 'message line))))
 
 (defun eclim--extract-archive-file (line)
-  (if (string-match (rx bol (or "jar" "zip") ":") (assoc-default 'filename line))
+  (if (string-match (rx eclim--compressed-urls-regexp) (assoc-default 'filename line))
       (eclim/with-results results ("archive_read" "-f" (assoc-default 'filename line))
         (results))
     line))
